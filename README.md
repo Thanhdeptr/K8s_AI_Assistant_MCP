@@ -246,7 +246,7 @@ The Rancher UI Extensions provide visual management interfaces for Kubernetes re
 
 #### Rancher UI Extension Interface
 
-![Rancher UI Demo](rancher-ui\assets\Screenshot 2025-08-20 104523.png)
+![Rancher UI Demo](rancher-ui/assets/Screenshot%202025-08-20%20104523.png)
 
 *Rancher UI Extension interface showing Kubernetes management capabilities*
 
