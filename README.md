@@ -26,114 +26,58 @@ The combination provides both command-line AI assistance and visual management c
 
 ## 🔄 System Workflow
 
-### End-to-End User Journey
+### Architecture Overview
+
+The K8s AI Assistant follows a multi-layered architecture that processes natural language queries through AI analysis and executes Kubernetes operations via MCP protocols.
 
 ```mermaid
-graph TD
-    A[👤 User Input] --> B[🎨 Rancher UI Extension]
-    B --> C[🔗 Backend API Server]
-    C --> D[🤖 Ollama AI Model]
-    D --> E[🛠️ MCP Server]
-    E --> F[☸️ Kubernetes Cluster]
-    F --> G[📊 Response Data]
-    G --> H[🔄 MCP Server]
-    H --> I[🤖 Ollama AI Model]
-    I --> J[🔗 Backend API Server]
-    J --> K[🎨 Rancher UI Extension]
-    K --> L[👤 User Display]
+graph LR
+    A[User Input] --> B[Rancher UI]
+    B --> C[Backend API]
+    C --> D[Ollama AI]
+    D --> E[MCP Server]
+    E --> F[Kubernetes]
+    F --> E
+    E --> D
+    D --> C
+    C --> B
+    B --> A
     
     style A fill:#e1f5fe
-    style L fill:#e1f5fe
     style B fill:#fff3e0
-    style K fill:#fff3e0
     style C fill:#f3e5f5
-    style J fill:#f3e5f5
     style D fill:#e8f5e8
-    style I fill:#e8f5e8
     style E fill:#fff8e1
-    style H fill:#fff8e1
     style F fill:#fce4ec
-    style G fill:#fce4ec
 ```
 
-### Detailed Workflow Steps
+### Core Components
 
-#### 1. **User Interaction** 🎨
-- User opens Rancher UI and navigates to K8s AI Assistant extension
-- Types natural language query (e.g., "Show me all pods with high CPU usage")
-- Interface provides real-time chat experience with AI
+| Component | Technology | Protocol | Port | Purpose |
+|-----------|------------|----------|------|---------|
+| **Frontend** | Vue.js + Rancher Shell | HTTP/HTTPS | 8005 | User interface and chat experience |
+| **Backend API** | Express.js | HTTP | 8055 | Request routing and response formatting |
+| **AI Model** | Ollama (gpt-oss:20b) | OpenAI-compatible API | 11434 | Natural language processing and intent mapping |
+| **MCP Server** | Node.js + TypeScript | JSON-RPC + SSE | 3000 | Kubernetes command execution |
+| **Kubernetes** | kubectl + Helm | Kubernetes API | 6443 | Cluster management and resource operations |
 
-#### 2. **Backend Processing** 🔗
-- Frontend sends request to Express.js backend server (port 8055)
-- Backend validates request and prepares for AI processing
-- Server maintains connection to both Ollama and MCP Server
+### Request Flow
 
-#### 3. **AI Analysis** 🤖
-- Ollama AI model (gpt-oss:20b) processes natural language query
-- AI determines required Kubernetes operations
-- Model maps user intent to specific kubectl/Helm commands
+1. **User submits natural language query** via Rancher UI extension
+2. **Backend API** validates and routes request to AI model
+3. **Ollama AI** analyzes intent and maps to Kubernetes operations
+4. **MCP Server** executes kubectl/Helm commands via JSON-RPC
+5. **Kubernetes API** returns cluster data and operation results
+6. **Response chain** processes data through AI formatting
+7. **Frontend** displays formatted results (tables, logs, insights)
 
-#### 4. **Tool Execution** 🛠️
-- MCP Server receives tool calls via JSON-RPC protocol
-- Server executes kubectl commands against Kubernetes cluster
-- Supports operations: get, describe, logs, port-forward, Helm charts, etc.
+### Key Features
 
-#### 5. **Cluster Interaction** ☸️
-- MCP Server communicates with Kubernetes API
-- Retrieves real-time cluster data (pods, services, deployments, etc.)
-- Executes requested operations safely with proper authentication
-
-#### 6. **Response Processing** 📊
-- Raw Kubernetes data is collected and formatted
-- MCP Server adds metadata and context information
-- Data is structured for AI interpretation
-
-#### 7. **AI Response Generation** 🤖
-- Ollama processes cluster data and generates human-readable response
-- AI formats output as tables, logs, or descriptive text
-- Response includes actionable insights and recommendations
-
-#### 8. **Frontend Display** 🎨
-- Backend sends formatted response to Rancher UI
-- Frontend renders response with proper formatting (tables, logs, etc.)
-- User sees real-time, interactive Kubernetes management interface
-
-### Key Technologies & Protocols
-
-| Component | Technology | Protocol | Port |
-|-----------|------------|----------|------|
-| **Frontend** | Vue.js + Rancher Shell | HTTP/HTTPS | 8005 |
-| **Backend API** | Express.js | HTTP | 8055 |
-| **AI Model** | Ollama (gpt-oss:20b) | OpenAI-compatible API | 11434 |
-| **MCP Server** | Node.js + TypeScript | JSON-RPC + SSE | 3000 |
-| **Kubernetes** | kubectl + Helm | Kubernetes API | 6443 |
-
-### Real-World Example
-
-```bash
-# User types: "Show me all pods in the default namespace with their status"
-
-1. Frontend → Backend: POST /api/chat
-2. Backend → Ollama: "List all pods in default namespace"
-3. Ollama → Backend: "Use kubectl_get pods --namespace=default"
-4. Backend → MCP: JSON-RPC call to kubectl_get
-5. MCP → K8s: kubectl get pods -n default
-6. K8s → MCP: Pod list data
-7. MCP → Backend: Formatted response
-8. Backend → Ollama: "Format this as a table"
-9. Ollama → Backend: "Here are the pods: [table]"
-10. Backend → Frontend: Final response
-11. Frontend → User: Displays formatted table
-```
-
-### Benefits of This Architecture
-
-✅ **Natural Language Interface** - Users can interact in plain English  
-✅ **Real-time Processing** - Immediate responses with live cluster data  
-✅ **Visual & Command-line** - Both UI and CLI capabilities  
-✅ **AI-powered Insights** - Intelligent analysis and recommendations  
-✅ **Secure Operations** - Proper authentication and RBAC support  
-✅ **Extensible Design** - Easy to add new tools and capabilities
+- **Natural Language Processing**: Converts user queries to Kubernetes commands
+- **Real-time Execution**: Live cluster data retrieval and operation execution
+- **Intelligent Formatting**: AI-powered response formatting and insights
+- **Secure Operations**: RBAC-compliant cluster access and audit logging
+- **Extensible Architecture**: Modular design for easy feature additions
 
 ## 🏗️ Architecture
 
