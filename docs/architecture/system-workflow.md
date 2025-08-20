@@ -1,426 +1,221 @@
-# 🔄 System Workflow & Architecture
+# 🔄 System Workflow - Simplified
 
-## 📊 System Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           K8s AI Assistant System                               │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────────────┐  │
-│  │   Frontend      │    │   Backend       │    │      MCP Server             │  │
-│  │   (Rancher UI)  │◄──►│   (Express.js)  │◄──►│   (Kubernetes Tools)        │  │
-│  │                 │    │                 │    │                             │  │
-│  │ • Vue.js        │    │ • Express.js    │    │ • kubectl commands          │  │
-│  │ • Chat Widget   │    │ • HTTP API      │    │ • Helm operations           │  │
-│  │ • Table Display │    │ • SSE Client    │    │ • Port forwarding           │  │
-│  │ • Logs Display  │    │ • Tool Mapping  │    │ • Resource management       │  │
-│  └─────────────────┘    └─────────────────┘    └─────────────────────────────┘  │
-│           │                       │                       │                      │
-│           │                       │                       │                      │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────────────┐  │
-│  │   Ollama        │    │   Kubernetes    │    │      Rancher Manager        │  │
-│  │   (AI Model)    │    │   Cluster       │    │      (UI Platform)          │  │
-│  │                 │    │                 │    │                             │  │
-│  │ • gpt-oss:20b   │    │ • Pods          │    │ • Extension Framework       │  │
-│  │ • Tool Calling  │    │ • Services      │    │ • UI Components             │  │
-│  │ • JSON-RPC      │    │ • Deployments   │    │ • Dashboard Integration     │  │
-│  └─────────────────┘    └─────────────────┘    └─────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
-
-## 🔄 Detailed Workflow
-
-### 1. User Input Flow
+## 🎯 Combined Workflow: FE → Tool Call → FE
 
 ```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   User      │───►│  Frontend   │───►│  Backend    │───►│   Ollama    │
-│  Types      │    │  (Vue.js)   │    │ (Express.js)│    │ (AI Model)  │
-│  Prompt     │    │             │    │             │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
-                                                              │
-                                                              ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   User      │◄───│  Frontend   │◄───│  Backend    │◄───│   Ollama    │
-│  Sees       │    │  (Vue.js)   │    │ (Express.js)│    │ (AI Model)  │
-│  Response   │    │             │    │             │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    Complete Workflow Cycle                                       │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐  │
+│  │    User     │───►│  Frontend   │───►│  Backend    │───►│   Ollama    │───►│   MCP       │  │
+│  │   Types     │    │  (Vue.js)   │    │(Express.js) │    │ (AI Model)  │    │  Server     │  │
+│  │   Prompt    │    │             │    │             │    │             │    │ (kubectl)   │  │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘  │
+│                                                                                                 │
+│                                                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐  │
+│  │    User     │◄───│  Frontend   │◄───│  Backend    │◄───│   Ollama    │◄───│   MCP       │  │
+│  │   Sees      │    │  (Vue.js)   │    │(Express.js) │    │ (AI Model)  │    │  Server     │  │
+│  │  Response   │    │             │    │             │    │             │    │ (kubectl)   │  │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘  │
+│                                                                                                 │
+│                                           │                                                    │
+│                                           ▼                                                    │
+│                                    ┌─────────────┐                                            │
+│                                    │ Kubernetes  │                                            │
+│                                    │  Cluster    │                                            │
+│                                    │             │                                            │
+│                                    │ • Pods      │                                            │
+│                                    │ • Services  │                                            │
+│                                    │ • Deployments│                                           │
+│                                    └─────────────┘                                            │
+└─────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2. Tool Calling Workflow
+## 🔧 Tools & Connections
+
+### Core Tools
+
+| Component | Tool | Purpose | Protocol |
+|-----------|------|---------|----------|
+| **Frontend** | Vue.js Chat Widget | User Interface | HTTP REST |
+| **Backend** | Express.js API | Tool Mapping & Formatting | HTTP REST |
+| **Ollama** | gpt-oss:20b | AI Processing & Tool Decision | OpenAI API |
+| **MCP Server** | kubectl Commands | Kubernetes Operations | JSON-RPC |
+| **Kubernetes** | API Server | Resource Management | REST API |
+
+### Connection Flow
 
 ```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Ollama    │───►│  Backend    │───►│  MCP Server │───►│ Kubernetes  │
-│  Decides    │    │  Tool       │    │  kubectl    │    │  Cluster    │
-│  to Call    │    │  Mapping    │    │  Command    │    │  Resources  │
-│  Tool       │    │             │    │  Execution  │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
-                                                              │
-                                                              ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Ollama    │◄───│  Backend    │◄───│  MCP Server │◄───│ Kubernetes  │
-│  Receives   │    │  Formats    │    │  Returns    │    │  Returns    │
-│  Tool       │    │  Response   │    │  Results    │    │  Data       │
-│  Result     │    │             │    │             │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+1. User Input → Frontend (Vue.js)
+   Protocol: HTTP POST /api/chat
+   Port: 8055
+
+2. Frontend → Backend (Express.js)
+   Protocol: HTTP REST API
+   Port: 8055
+
+3. Backend → Ollama (AI Model)
+   Protocol: OpenAI API
+   Port: 11434
+
+4. Ollama → Backend (Tool Decision)
+   Protocol: Function Calling
+   Format: JSON-RPC
+
+5. Backend → MCP Server
+   Protocol: JSON-RPC + SSE
+   Port: 3000
+
+6. MCP Server → Kubernetes
+   Protocol: kubectl CLI
+   Port: 6443
+
+7. Kubernetes → MCP Server
+   Protocol: API Response
+   Format: JSON
+
+8. MCP Server → Backend
+   Protocol: JSON-RPC
+   Format: Tool Result
+
+9. Backend → Ollama
+   Protocol: OpenAI API
+   Format: Tool Result
+
+10. Ollama → Backend
+    Protocol: OpenAI API
+    Format: Final Response
+
+11. Backend → Frontend
+    Protocol: HTTP Response
+    Format: JSON
+
+12. Frontend → User
+    Protocol: UI Update
+    Format: Formatted Display
 ```
 
-## 🔌 Connection Details
+## 🔄 Detailed Step-by-Step Flow
 
-### Frontend ↔ Backend Connection
-
-```javascript
-// Frontend (Vue.js) → Backend (Express.js)
-const response = await fetch("https://da10dc21d1f8.ngrok-free.app/api/chat", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    model: "gpt-oss:20b",
-    messages: this.messages.map(msg => ({
-      role: msg.role === "user" ? "user" : "assistant",
-      content: msg.text
-    })),
-    stream: false
-  })
-});
+### Phase 1: User Input Processing
+```
+1. User types prompt in Rancher UI
+2. Frontend (Vue.js) sends POST to /api/chat
+3. Backend receives request and connects to MCP
+4. Backend gets available tools from MCP Server
+5. Backend sends prompt + tools to Ollama
 ```
 
-**Protocol:** HTTP REST API  
-**Port:** 8055 (Backend)  
-**Format:** JSON  
-**Features:**
-- Message history management
-- Response formatting (tables, logs)
-- Error handling
-- Abort controller support
-
-### Backend ↔ Ollama Connection
-
-```javascript
-// Backend (Express.js) → Ollama
-const openai = new OpenAI({
-  baseURL: 'http://192.168.10.32:11434/v1',  // Ollama endpoint
-  apiKey: 'ollama'
-});
-
-const completion = await openai.chat.completions.create({
-  model: 'gpt-oss:20b',
-  messages,
-  tools: OPENAI_COMPAT_TOOLS,  // MCP tools mapped to OpenAI format
-  tool_choice: 'auto'
-});
+### Phase 2: AI Processing & Tool Decision
+```
+6. Ollama processes prompt and decides to call tool
+7. Ollama returns tool call decision to Backend
+8. Backend maps MCP tools to OpenAI format
+9. Backend executes tool call via MCP Server
 ```
 
-**Protocol:** HTTP REST API  
-**Port:** 11434 (Ollama)  
-**Format:** OpenAI-compatible API  
-**Features:**
-- Tool calling support
-- JSON-RPC format
-- Model inference
-- Response streaming
-
-### Backend ↔ MCP Server Connection
-
-```javascript
-// Backend (Express.js) → MCP Server (HTTP + SSE)
-class MCPHttpClient {
-  async connect() {
-    // 1. GET /sse to establish SSE connection
-    const r = await fetch(`${this.base}/sse`, {
-      method: 'GET',
-      headers: { Accept: 'text/event-stream' }
-    });
-    
-    // 2. Extract session endpoint from SSE events
-    // 3. Use session for JSON-RPC calls
-  }
-  
-  async rpc(method, params) {
-    // POST JSON-RPC to /messages?sessionId=...
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id, method, params })
-    });
-  }
-}
+### Phase 3: Kubernetes Operations
+```
+10. MCP Server executes kubectl command
+11. Kubernetes API processes command
+12. Kubernetes returns data to MCP Server
+13. MCP Server formats and returns results
 ```
 
-**Protocol:** HTTP + Server-Sent Events (SSE)  
-**Port:** 3000 (MCP Server)  
-**Format:** JSON-RPC 2.0  
-**Features:**
-- Session management
-- Tool execution
-- Real-time responses
-- Connection recovery
-
-### MCP Server ↔ Kubernetes Connection
-
-```javascript
-// MCP Server → Kubernetes Cluster
-// kubectl commands executed via child_process
-const { exec } = require('child_process');
-
-// Example: kubectl get pods
-exec('kubectl get pods --output=json', (error, stdout, stderr) => {
-  // Process kubectl output
-  // Return formatted results
-});
+### Phase 4: Response Generation
+```
+14. Backend receives tool results from MCP
+15. Backend sends tool results back to Ollama
+16. Ollama processes results and generates final response
+17. Ollama returns final response to Backend
 ```
 
-**Protocol:** kubectl CLI  
-**Authentication:** kubeconfig  
-**Format:** JSON/YAML  
-**Features:**
-- Resource management
-- Cluster operations
-- Real-time data
-- Error handling
-
-## 🔄 Complete User Prompt Workflow
-
-### Step-by-Step Process
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant F as Frontend (Vue.js)
-    participant B as Backend (Express.js)
-    participant O as Ollama (AI Model)
-    participant M as MCP Server
-    participant K as Kubernetes Cluster
-
-    U->>F: Types prompt: "Show me all pods"
-    F->>B: POST /api/chat (with message history)
-    B->>O: OpenAI API call with tools list
-    O->>O: Decides to call kubectl_get tool
-    O->>B: Returns tool call request
-    B->>M: JSON-RPC: tools/call (kubectl_get)
-    M->>K: Executes: kubectl get pods
-    K->>M: Returns pod list (JSON)
-    M->>B: Returns tool result
-    B->>O: Sends tool result back
-    O->>O: Processes result and formats response
-    O->>B: Returns final formatted response
-    B->>F: Returns response with table formatting
-    F->>U: Displays formatted table
+### Phase 5: User Response Display
+```
+18. Backend formats response for frontend
+19. Backend sends response to Frontend
+20. Frontend displays formatted response to user
+21. User sees final result in Rancher UI
 ```
 
-### 1. User Input Processing
+## 🛠️ Key Tools & Their Functions
 
-```javascript
-// Frontend receives user input
-async sendMessage() {
-  const text = this.userInput.trim();
-  this.messages.push({ role: "user", text });
-  
-  // Send to backend
-  const res = await fetch("https://da10dc21d1f8.ngrok-free.app/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "gpt-oss:20b",
-      messages: this.messages.map(msg => ({
-        role: msg.role === "user" ? "user" : "assistant",
-        content: msg.text
-      })),
-      stream: false
-    })
-  });
-}
-```
+### Frontend Tools (Vue.js)
+- **Chat Widget**: User input handling
+- **Table Display**: kubectl output formatting
+- **Logs Display**: Container logs visualization
+- **Local Storage**: Chat history persistence
 
-### 2. Backend Processing
+### Backend Tools (Express.js)
+- **Tool Mapping**: MCP → OpenAI format conversion
+- **Response Formatting**: Table/log formatting
+- **Session Management**: MCP connection handling
+- **Error Handling**: Connection recovery
 
-```javascript
-// Backend processes request
-app.post('/api/chat', async (req, res) => {
-  const userMessages = req.body.messages;
-  
-  // 1. Ensure MCP connection
-  const mcp = await ensureMcp();
-  
-  // 2. Run tool calling loop with Ollama
-  const result = await runToolCallingWithOllama({
-    userMessages,
-    tools: OPENAI_COMPAT_TOOLS,
-    mcp,
-  });
-  
-  return res.json({ message: { content: result.text } });
-});
-```
+### Ollama Tools (AI Model)
+- **Tool Decision**: When to call external tools
+- **Function Calling**: Tool parameter generation
+- **Response Generation**: Natural language output
+- **Context Management**: Conversation history
 
-### 3. AI Model Decision
+### MCP Server Tools (kubectl)
+- **kubectl get**: Resource listing
+- **kubectl describe**: Resource details
+- **kubectl logs**: Container logs
+- **kubectl apply**: Resource creation/update
+- **kubectl delete**: Resource deletion
+- **Helm operations**: Chart management
 
-```javascript
-// Ollama decides to call tools
-const completion = await openai.chat.completions.create({
-  model: MODEL_NAME,
-  messages,
-  tools,  // MCP tools mapped to OpenAI format
-  tool_choice: 'auto',
-});
+### Kubernetes Tools (API Server)
+- **Resource Management**: Pods, Services, Deployments
+- **API Operations**: CRUD operations
+- **Authentication**: RBAC enforcement
+- **Data Retrieval**: Resource state information
 
-const toolCalls = completion.choices[0]?.message?.tool_calls || [];
-if (toolCalls.length > 0) {
-  // Execute tool calls
-  for (const tc of toolCalls) {
-    const mcpRes = await mcp.toolsCall(tc.function.name, tc.function.arguments);
-    // Send result back to AI
-  }
-}
-```
-
-### 4. MCP Tool Execution
-
-```javascript
-// MCP Server executes kubectl commands
-async toolsCall(name, args) {
-  return this.rpc('tools/call', { name, arguments: args });
-}
-
-// Example: kubectl get pods
-// MCP Server executes: kubectl get pods --output=json
-// Returns: JSON formatted pod list
-```
-
-### 5. Response Formatting
-
-```javascript
-// Backend formats response for frontend
-if (reply.includes('isMarkTable:true')) {
-  const { table, preamble, afterText } = this.parseMarkdownTable(tableContent);
-  this.messages.push({
-    role: "bot",
-    text: tableContent,
-    isTable: true,
-    table,
-    preamble,
-    afterText
-  });
-}
-```
-
-## 🔧 Tool Mapping
-
-### MCP Tools → OpenAI Tools
-
-```javascript
-function mapMcpToolsToOpenAITools(mcpTools) {
-  return mcpTools.map((t) => ({
-    type: 'function',
-    function: {
-      name: t.name,
-      description: t.description || `MCP tool: ${t.name}`,
-      parameters: t.inputSchema || { type: 'object', properties: {} },
-    },
-  }));
-}
-```
-
-**Available Tools:**
-- `kubectl_get` - Get Kubernetes resources
-- `kubectl_describe` - Describe resources
-- `kubectl_logs` - Get pod logs
-- `kubectl_scale` - Scale deployments
-- `port_forward` - Port forwarding
-- `install_helm_chart` - Helm operations
-- `k8s-diagnose` - Troubleshooting
-
-## 🌐 Network Configuration
-
-### Port Configuration
+## 🔌 Network Configuration
 
 | Service | Port | Protocol | Purpose |
 |---------|------|----------|---------|
-| Frontend | 8005 | HTTPS | Rancher UI Extensions |
-| Backend | 8055 | HTTP | Express.js API |
-| MCP Server | 3000 | HTTP+SSE | Kubernetes tools |
-| Ollama | 11434 | HTTP | AI model inference |
-| Kubernetes | 6443 | HTTPS | API server |
+| Rancher UI | 8005 | HTTPS | User Interface |
+| Backend API | 8055 | HTTP | Express.js Server |
+| MCP Server | 3000 | HTTP+SSE | Kubernetes Tools |
+| Ollama | 11434 | HTTP | AI Model Inference |
+| Kubernetes | 6443 | HTTPS | API Server |
 
-### Environment Variables
+## ⚡ Performance Metrics
 
-```bash
-# Backend Configuration
-OLLAMA_BASE=http://192.168.10.32:11434/v1
-MODEL_NAME=gpt-oss:20b
-MCP_BASE=http://192.168.10.18:3000
+| Step | Typical Time | Description |
+|------|-------------|-------------|
+| User → Frontend | 5-10ms | HTTP request |
+| Frontend → Backend | 5-10ms | API call |
+| Backend → Ollama | 50-200ms | AI inference |
+| Ollama → Backend | 10-20ms | Tool decision |
+| Backend → MCP | 20-50ms | JSON-RPC |
+| MCP → Kubernetes | 100-500ms | kubectl execution |
+| Kubernetes → MCP | 50-100ms | Data retrieval |
+| MCP → Backend | 10-20ms | Result formatting |
+| Backend → Ollama | 50-200ms | Final processing |
+| Ollama → Backend | 10-20ms | Response generation |
+| Backend → Frontend | 5-10ms | HTTP response |
+| **Total** | **300-1100ms** | **Complete cycle** |
 
-# MCP Server Configuration
-KUBECONFIG_PATH=/home/hatthanh/.kube/config
-ENABLE_UNSAFE_SSE_TRANSPORT=true
-HOST=0.0.0.0
-PORT=3000
+## 🛡️ Error Handling
 
-# Frontend Configuration
-API=https://192.168.10.18:8005
-```
+### Connection Failures
+- **MCP Connection**: Auto-reconnect with session recovery
+- **Ollama Connection**: Retry with exponential backoff
+- **Kubernetes Connection**: kubectl context validation
 
-## 🔄 Error Handling & Recovery
+### Tool Execution Errors
+- **Invalid Commands**: Parameter validation
+- **Permission Errors**: RBAC check before execution
+- **Resource Not Found**: Graceful error messages
 
-### Connection Recovery
+### Frontend Errors
+- **Network Timeout**: User-friendly error display
+- **Invalid Response**: Fallback to text display
+- **Session Expiry**: Automatic reconnection
 
-```javascript
-// MCP Client reconnection logic
-async rpc(method, params = {}, id = Date.now()) {
-  for (let attempt = 0; attempt <= this._maxReconnectAttempts; attempt++) {
-    try {
-      if (!this.sessionPath || this.connectionState !== 'connected') {
-        await this.connect();
-      }
-      // Execute RPC call
-      return await this._executeRpc(method, params, id);
-    } catch (error) {
-      if (this._isSessionError(error) && attempt < this._maxReconnectAttempts) {
-        this.connectionState = 'reconnecting';
-        this.sessionPath = null;
-        await new Promise(resolve => setTimeout(resolve, this._reconnectDelay));
-        continue;
-      }
-      throw error;
-    }
-  }
-}
-```
-
-### Frontend Error Handling
-
-```javascript
-// Frontend error handling
-try {
-  const data = await res.json();
-  if (data.message && data.message.content) {
-    // Process successful response
-  }
-} catch (err) {
-  if (err.name !== 'AbortError') {
-    this.messages.push({ 
-      role: "bot", 
-      text: `❌ Lỗi kết nối: ${err.message}` 
-    });
-  }
-}
-```
-
-## 📊 Data Flow Summary
-
-1. **User Input** → Frontend (Vue.js)
-2. **Frontend** → Backend (Express.js) via HTTP API
-3. **Backend** → Ollama (AI Model) via OpenAI API
-4. **Ollama** → Backend (Tool call decision)
-5. **Backend** → MCP Server via JSON-RPC
-6. **MCP Server** → Kubernetes via kubectl
-7. **Kubernetes** → MCP Server (results)
-8. **MCP Server** → Backend (formatted results)
-9. **Backend** → Ollama (tool results)
-10. **Ollama** → Backend (final response)
-11. **Backend** → Frontend (formatted response)
-12. **Frontend** → User (displayed result)
-
-This architecture provides a robust, scalable system for AI-powered Kubernetes management with real-time tool execution and user-friendly interface.
+This simplified workflow shows the complete cycle from user input through AI processing, tool execution, and back to user response display.
