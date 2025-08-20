@@ -133,13 +133,20 @@ The Rancher UI Extensions provide visual management interfaces for Kubernetes re
 
 ### Demo Screenshots
 
-> **📸 Demo Images Placeholder**
+#### Rancher UI Extension Interface
+
+![Rancher UI Demo](docs/demo/screenshot-rancher-ui.png)
+
+*Rancher UI Extension interface showing Kubernetes management capabilities*
+
+#### Additional Demo Content (Coming Soon)
+
+> **📸 More Demo Images**
 > 
-> *Coming soon: Screenshots and videos demonstrating the K8s AI Assistant in action*
+> *Additional screenshots and videos demonstrating the K8s AI Assistant in action*
 > 
 > **Planned Demo Content:**
 > - MCP Server command-line interface
-> - Rancher UI extension dashboards
 > - AI-powered troubleshooting workflow
 > - Multi-cluster management interface
 > - Real-time monitoring and alerts
