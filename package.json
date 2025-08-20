@@ -1,0 +1,86 @@
+{
+  "name": "k8s-ai-assistant-mcp",
+  "version": "1.0.0",
+  "description": "Kubernetes AI Assistant combining MCP Server and Rancher UI Extensions for comprehensive K8s management",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Building K8s AI Assistant MCP\"",
+    "dev": "echo \"Starting development mode\"",
+    "install:all": "npm run install:mcp && npm run install:ui",
+    "install:mcp": "cd mcp-server-kubernetes && npm install",
+    "install:ui": "cd rancher-ui && npm install",
+    "build:all": "npm run build:mcp && npm run build:ui",
+    "build:mcp": "cd mcp-server-kubernetes && npm run build",
+    "build:ui": "cd rancher-ui && npm run build",
+    "test:all": "npm run test:mcp && npm run test:ui",
+    "test:mcp": "cd mcp-server-kubernetes && npm run test",
+    "test:ui": "cd rancher-ui && npm run test",
+    "clean": "rm -rf node_modules && cd mcp-server-kubernetes && rm -rf node_modules && cd ../rancher-ui && rm -rf node_modules",
+    "docs": "echo \"Documentation available in README.md and docs/ directory\"",
+    "start": "echo \"Please run individual components: npm run start:mcp or npm run start:ui\"",
+    "start:mcp": "cd mcp-server-kubernetes && npm start",
+    "start:ui": "cd rancher-ui && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP.git"
+  },
+  "keywords": [
+    "kubernetes",
+    "k8s",
+    "ai",
+    "assistant",
+    "mcp",
+    "rancher",
+    "ui",
+    "extensions",
+    "management",
+    "cluster",
+    "devops",
+    "cloud-native"
+  ],
+  "author": "Thanhdeptr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP/issues"
+  },
+  "homepage": "https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "workspaces": [
+    "mcp-server-kubernetes",
+    "rancher-ui"
+  ],
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Thanhdeptr"
+  },
+  "contributors": [
+    {
+      "name": "Thanhdeptr",
+      "email": "128139577+Thanhdeptr@users.noreply.github.com"
+    }
+  ],
+  "acknowledgments": [
+    {
+      "name": "Flux159",
+      "project": "mcp-server-kubernetes",
+      "url": "https://github.com/Flux159/mcp-server-kubernetes/"
+    },
+    {
+      "name": "Rancher Labs",
+      "project": "ui-plugin-examples",
+      "url": "https://github.com/rancher/ui-plugin-examples"
+    }
+  ]
+}
