@@ -12,7 +12,7 @@ A comprehensive Kubernetes management solution combining **MCP (Model Context Pr
 - [Installation](#installation)
 - [Usage](#usage)
 - [Development](#development)
-- [Contributing](#contributing)
+- [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ## 🎯 Overview
@@ -280,24 +280,6 @@ cd mcp-server-kubernetes && npm run test
 # Test UI extensions only
 cd rancher-ui && npm run test
 ```
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our contributing guidelines:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Write comprehensive tests
-- Update documentation for new features
-- Follow conventional commit messages
-- Ensure all tests pass before submitting
 
 ## 📄 License
 
