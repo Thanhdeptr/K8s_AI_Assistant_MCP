@@ -324,18 +324,6 @@ This project builds upon the excellent work of the following open-source project
 - **Rancher Labs** - UI extension framework and examples
 - **Open Source Community** - Continuous improvements and feedback
 
-## 📞 Support
-
-- **Issues:** [GitHub Issues](https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP/discussions)
-- **Documentation:** [Wiki](https://github.com/Thanhdeptr/K8s_AI_Assistant_MCP/wiki)
-
-## 🔄 Version History
-
-- **v1.0.0** - Initial release with MCP Server and basic UI extensions
-- **v1.1.0** - Enhanced AI diagnostics and monitoring features
-- **v1.2.0** - Multi-cluster support and advanced UI components
-
 ---
 
 **⭐ Star this repository if you find it useful!**
