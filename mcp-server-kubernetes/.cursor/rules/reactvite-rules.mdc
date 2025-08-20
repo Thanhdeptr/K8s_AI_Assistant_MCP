@@ -1,0 +1,154 @@
+Overview
+
+- Framework: React + Vite
+- Routing: React Router DOM
+- API Layer: Supabase JavaScript Client ([docs](https://supabase.com/docs/reference/javascript/typescript-support))
+- Styling: Tailwind CSS as primary, CSS Modules only for custom overrides
+---
+
+Directory Structure
+
+
+`
+src/
+├── components/
+│ ├── layout/ # Shared layout components
+│ ├── pages/ # Feature-based pages
+│ │ ├── home/ # Home page
+│ │ ├── user/ # User management
+│ │ └── [feature]/ # Additional modules
+├── services/ # API services for each module
+│ ├── user.ts # User API services
+│ └── [feature].ts # Feature-specific APIs
+├── assets/ # Static assets (images, fonts, icons)
+├── styles/ # Global and scoped CSS
+│ ├── globals.css # Global Tailwind config
+│ ├── [page].module.css # Page-specific custom styles
+├── App.tsx # Root App component
+├── main.tsx # Vite entry point
+└── env.d.ts # Type definitions for env variables
+`
+
+---
+
+Naming Conventions
+
+
+- Components: PascalCase → UserDetail.tsx
+- Service files: camelCase → userApi.ts
+- CSS Modules: kebab-case → user-detail.module.css
+- Directories: lowercase → user, product
+- Hooks: start with use → useUserData.ts
+
+---
+
+Feature Implementation Workflow
+
+
+Add a New Module
+
+1. Create a new folder under src/components/pages/[feature]/
+2. Add API service in src/services/[feature].ts
+3. Add custom CSS in src/styles/[feature].module.css (if needed)
+
+Add a New Page to Existing Module
+
+1. Add component file: src/components/pages/[module]/[page].tsx
+2. Add optional CSS: src/styles/[module]-[page].module.css
+3. Add route in App.tsx
+
+Add Shared Component
+
+- Place in src/components/common/ with reusable logic
+
+Add New API
+
+- Extend the existing service file for the module
+- Return typed responses and handle errors gracefully
+
+---
+
+Styling Guidelines
+
+1. Tailwind First: Use utility classes for 90% of styling
+2. Scoped Styles: Use CSS Modules only when Tailwind cannot cover edge cases
+3. Avoid Global Overrides: Keep globals.css minimal
+4. Responsive Design: Mobile-first using Tailwind breakpoints
+
+---
+
+Page Template
+
+
+`tsx
+import { useState, useEffect } from 'react'
+import { getUserData } from '@/services/user'
+
+export function UserListPage() {
+const [users, setUsers] = useState([])
+const [isLoading, setIsLoading] = useState(true)
+
+useEffect(() => {
+fetchData()
+}, [])
+
+async function fetchData() {
+try {
+const data = await getUserData()
+setUsers(data)
+} catch (error) {
+console.error('Failed to fetch users:', error)
+} finally {
+setIsLoading(false)
+}
+}
+
+if (isLoading) return
+Loading...
+
+
+
+return (
+
+User List
+
+
+{users.map(user => (
+{user.name}
+
+))}
+
+
+)
+}
+`
+
+---
+
+Service API Example
+
+
+`ts
+import { supabase } from '@/lib/supabase'
+import type { User } from '@/types/user'
+
+export async function getUserData(): Promise {
+const { data, error } = await supabase.from('users').select('*')
+if (error) throw new Error(Supabase Error: ${error.message})
+return data || []
+}
+`
+
+---
+
+Database Interaction
+
+- Use supabase-js client strictly per [official docs](https://supabase.com/docs/reference/javascript/typescript-support)
+- All services return typed results and handle errors upfront
+
+---
+
+Tools Used
+
+- Supabase: For database queries
+- Playwright: For browser automation and previews

@@ -1,0 +1,8 @@
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+containerRuntimeEndpoint: npipe:////./pipe/docker_engine
+failSwapOn: false
+nodeLabels:
+  kubernetes.io/os: windows
+  kubernetes.io/arch: amd64

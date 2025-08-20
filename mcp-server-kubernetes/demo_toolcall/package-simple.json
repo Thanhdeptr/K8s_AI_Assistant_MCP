@@ -1,0 +1,23 @@
+{
+    "name": "openrouter-simple-demo",
+    "version": "1.0.0",
+    "description": "Demo đơn giản OpenRouter Tool Calling - CentOS 7",
+    "main": "simple_demo.js",
+    "scripts": {
+        "start": "node simple_demo.js",
+        "interactive": "node simple_demo.js --interactive",
+        "demo": "node simple_demo.js"
+    },
+    "keywords": [
+        "openrouter",
+        "gpt-oss-20b",
+        "tool-calling",
+        "centos7"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "engines": {
+        "node": ">=8.0.0"
+    }
+}
+
