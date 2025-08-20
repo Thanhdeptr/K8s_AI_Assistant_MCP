@@ -8,6 +8,7 @@ Hướng dẫn cài đặt và chạy K8s AI Assistant MCP Server và Backend Se
 - Kubernetes cluster với kubectl đã cấu hình
 - Ollama server (cho AI model)
 - KUBECONFIG_PATH trỏ đến file config của cluster
+- Yarn package manager
 
 ## 🔧 Cài đặt
 
@@ -29,6 +30,10 @@ npm run build
 # Cài đặt Backend Server (nếu có)
 cd ../backend-server
 npm install
+
+# Cài đặt Frontend Extensions
+cd ../rancher-ui
+yarn install
 ```
 
 ## 🚀 Chạy MCP Server
@@ -126,6 +131,58 @@ Loaded Tools from MCP:
 - 'ping'
 ```
 
+## 🎨 Chạy Frontend Extensions (Rancher UI)
+
+### Build và chạy extensions locally:
+
+```bash
+cd rancher-ui
+
+# 1. Cài đặt dependencies
+yarn install
+
+# 2. Set API environment variable để trỏ đến Rancher backend
+export API=https://192.168.10.18:8005
+
+# 3. Chạy Rancher trong development mode
+yarn dev
+```
+
+### Truy cập Rancher UI:
+
+1. **Mở web browser** và truy cập: `https://192.168.10.18:8005`
+2. **Đăng nhập** vào Rancher
+3. **Extensions sẽ tự động load** sau khi đăng nhập
+4. **Hot-reload** sẽ hoạt động khi edit code
+
+### Output mong đợi:
+
+```
+yarn run v1.22.19
+$ webpack serve --config webpack.config.js
+ℹ ｢wds｣: Project is running at https://192.168.10.18:8005/
+ℹ ｢wds｣: webpack output is served from /
+ℹ ｢wds｣: Content not from webpack is served from /path/to/rancher-ui
+ℹ ｢wds｣: 404s will fallback to /index.html
+```
+
+### Development Workflow:
+
+```bash
+# 1. Start development server
+yarn dev
+
+# 2. Edit extension code trong src/ directory
+# 3. Changes sẽ tự động reload trong browser
+# 4. Check browser console cho errors
+
+# 5. Build for production
+yarn build
+
+# 6. Package extensions
+yarn package
+```
+
 ## ⚙️ Cấu hình
 
 ### Environment Variables
@@ -138,6 +195,7 @@ Loaded Tools from MCP:
 | `PORT` | Port cho MCP server | `3000` |
 | `OLLAMA_BASE_URL` | URL của Ollama server | `http://192.168.10.32:11434/v1` |
 | `OLLAMA_MODEL` | Model AI sử dụng | `gpt-oss:20b` |
+| `API` | Rancher backend URL | `https://192.168.10.18:8005` |
 
 ### Cấu hình Ollama
 
@@ -167,6 +225,11 @@ ollama serve
 
 - **API Base:** `http://0.0.0.0:8055`
 - **MCP Connection:** `http://192.168.10.18:3000`
+
+### Frontend Extensions
+
+- **Rancher UI:** `https://192.168.10.18:8005`
+- **Development Server:** `https://192.168.10.18:8005`
 
 ## 🛠️ Troubleshooting
 
@@ -204,6 +267,22 @@ curl http://0.0.0.0:3000/sse
 pkill -f "node index.js"
 ```
 
+5. **Frontend extensions không load:**
+```bash
+# Kiểm tra API environment variable
+echo $API
+
+# Restart development server
+pkill -f "yarn dev"
+yarn dev
+```
+
+6. **SSL certificate issues:**
+```bash
+# Bỏ qua SSL verification cho development
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+```
+
 ## 📝 Logs
 
 ### MCP Server Logs
@@ -222,6 +301,14 @@ tail -f backend-server/logs/server.log
 
 # Xem logs với timestamp
 journalctl -u backend-server -f
+```
+
+### Frontend Development Logs
+```bash
+# Xem webpack dev server logs
+tail -f rancher-ui/webpack.log
+
+# Browser console logs (F12 trong browser)
 ```
 
 ## 🔄 Auto-restart với PM2
@@ -259,6 +346,19 @@ module.exports = {
         PORT: '8055',
         OLLAMA_BASE_URL: 'http://192.168.10.32:11434/v1',
         OLLAMA_MODEL: 'gpt-oss:20b'
+      },
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G'
+    },
+    {
+      name: 'frontend-dev',
+      script: 'yarn',
+      args: 'dev',
+      cwd: './rancher-ui',
+      env: {
+        API: 'https://192.168.10.18:8005'
       },
       instances: 1,
       autorestart: true,
@@ -310,6 +410,70 @@ curl http://0.0.0.0:8055/health
 curl http://0.0.0.0:8055/api/ollama/status
 ```
 
+### Test Frontend Extensions:
+```bash
+# Kiểm tra development server
+curl -k https://192.168.10.18:8005
+
+# Kiểm tra extensions loaded
+# Mở browser và check console logs
+```
+
+## 🚀 Quick Start Script
+
+Tạo script để chạy tất cả services cùng lúc:
+
+```bash
+cat > start-all.sh << 'EOF'
+#!/bin/bash
+
+echo "🚀 Starting K8s AI Assistant MCP..."
+
+# Set environment variables
+export KUBECONFIG_PATH=/home/hatthanh/.kube/config
+export ENABLE_UNSAFE_SSE_TRANSPORT=true
+export HOST=0.0.0.0
+export API=https://192.168.10.18:8005
+
+# Start MCP Server
+echo "📡 Starting MCP Server..."
+cd mcp-server-kubernetes/dist
+node index.js &
+MCP_PID=$!
+
+# Start Backend Server
+echo "🔧 Starting Backend Server..."
+cd ../../backend-server
+node server.js &
+BACKEND_PID=$!
+
+# Start Frontend Development
+echo "🎨 Starting Frontend Extensions..."
+cd ../rancher-ui
+yarn dev &
+FRONTEND_PID=$!
+
+echo "✅ All services started!"
+echo "MCP Server PID: $MCP_PID"
+echo "Backend Server PID: $BACKEND_PID"
+echo "Frontend PID: $FRONTEND_PID"
+echo ""
+echo "🌐 Access points:"
+echo "  - Rancher UI: https://192.168.10.18:8005"
+echo "  - MCP Server: http://0.0.0.0:3000/sse"
+echo "  - Backend API: http://0.0.0.0:8055"
+echo ""
+echo "Press Ctrl+C to stop all services"
+
+# Wait for interrupt
+trap "echo '🛑 Stopping all services...'; kill $MCP_PID $BACKEND_PID $FRONTEND_PID; exit" INT
+wait
+EOF
+
+chmod +x start-all.sh
+./start-all.sh
+```
+
 ---
 
-**🎯 Lưu ý:** Đảm bảo tất cả services (Ollama, MCP Server, Backend Server) đều đang chạy trước khi sử dụng K8s AI Assistant!
+**🎯 Lưu ý:** Đảm bảo tất cả services (Ollama, MCP Server, Backend Server, Frontend Extensions) đều đang chạy trước khi sử dụng K8s AI Assistant!
