@@ -161,6 +161,7 @@ The Rancher UI Extensions provide visual management interfaces for Kubernetes re
 - Node.js 18+ and npm/bun
 - kubectl configured with cluster access
 - Rancher Manager (for UI extensions)
+- Ollama server (for AI model)
 
 ### Quick Start
 
@@ -204,6 +205,10 @@ npm run package
 # Deploy to Rancher
 helm install k8s-ai-extensions ./charts/
 ```
+
+### Detailed Setup Instructions
+
+For detailed setup instructions including how to run the MCP server and backend server, see **[SETUP.md](SETUP.md)**.
 
 ## 📖 Usage
 
